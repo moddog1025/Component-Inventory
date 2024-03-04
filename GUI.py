@@ -13,16 +13,17 @@ def add_to_inventory(component_type, specification, package, amount):
         "amount": amount
     })
 
-# Add Inventory window
+# Add Inventory function (to open from the View Inventory window)
 def open_add_inventory():
     add_win = tk.Toplevel(root)
     add_win.title("Add Inventory")
+    add_win.attributes('-fullscreen', True)  # Make the Add Inventory window fullscreen
 
     # Component type
     ttk.Label(add_win, text="Component Type:").grid(column=0, row=0)
     component_type_var = tk.StringVar()
     component_type_dd = ttk.Combobox(add_win, textvariable=component_type_var)
-    component_type_dd['values'] = ("Resistor", "Capacitor", "LDO", "Microcontroller", "Crystal", "Sensor", "Diode", "LED")  # Example component types
+    component_type_dd['values'] = ("Resistor", "Capacitor", "Inductor")  # Example component types
     component_type_dd.grid(column=1, row=0)
 
     # Specification
@@ -51,30 +52,31 @@ def open_add_inventory():
 
     ttk.Button(add_win, text="Add Component", command=add_item).grid(column=0, row=4, columnspan=2)
 
-    # Done Button
-    ttk.Button(add_win, text="Done", command=lambda: [add_win.destroy(), open_view_inventory()]).grid(column=0, row=5, columnspan=2)
+    # Done Button to close the Add Inventory window
+    ttk.Button(add_win, text="Done", command=add_win.destroy).grid(column=0, row=5, columnspan=2)
 
-# View Inventory window
-def open_view_inventory():
-    view_win = tk.Toplevel(root)
-    view_win.title("View Inventory")
-
-    tree = ttk.Treeview(view_win, columns=("Type", "Specification", "Package", "Amount"), show="headings")
-    tree.heading("Type", text="Component Type")
-    tree.heading("Specification", text="Specification")
-    tree.heading("Package", text="Package")
-    tree.heading("Amount", text="Amount")
-
-    for item in inventory:
-        tree.insert("", tk.END, values=(item["type"], item["specification"], item["package"], item["amount"]))
-    tree.pack(expand=True, fill='both')
-
-# Main Window
+# Initialize main application window
 root = tk.Tk()
 root.title("Inventory Manager")
+root.attributes('-fullscreen', True)  # Make the main window fullscreen
 
-ttk.Button(root, text="Add Inventory", command=open_add_inventory).pack(side=tk.LEFT, padx=(20, 10), pady=20)
-ttk.Button(root, text="View Inventory", command=open_view_inventory).pack(side=tk.RIGHT, padx=(10, 20), pady=20)
+# View Inventory setup within the main window
+tree = ttk.Treeview(root, columns=("Type", "Specification", "Package", "Amount"), show="headings")
+tree.heading("Type", text="Component Type")
+tree.heading("Specification", text="Specification")
+tree.heading("Package", text="Package")
+tree.heading("Amount", text="Amount")
+
+# Function to update the inventory view
+def update_view():
+    for i in tree.get_children():
+        tree.delete(i)
+    for item in inventory:
+        tree.insert("", tk.END, values=(item["type"], item["specification"], item["package"], item["amount"]))
+
+# Add Inventory button in the main window
+ttk.Button(root, text="Add Inventory", command=lambda: [open_add_inventory(), update_view()]).pack(side=tk.TOP, pady=10)
+
+tree.pack(expand=True, fill='both')
 
 root.mainloop()
-
