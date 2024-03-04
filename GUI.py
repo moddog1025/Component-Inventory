@@ -23,7 +23,7 @@ def open_add_inventory():
     ttk.Label(add_win, text="Component Type:").grid(column=0, row=0)
     component_type_var = tk.StringVar()
     component_type_dd = ttk.Combobox(add_win, textvariable=component_type_var)
-    component_type_dd['values'] = ("Resistor", "Capacitor", "Inductor")  # Example component types
+    component_type_dd['values'] = ("Resistor", "Capacitor", "LDO", "Crystal", "Microcontroller", "Sensor", "Diode", "MOSFET", "LED")  # Example component types
     component_type_dd.grid(column=1, row=0)
 
     # Specification
